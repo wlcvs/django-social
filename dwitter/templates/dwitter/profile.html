@@ -52,34 +52,62 @@
 
     <div class="block">
         <h3 class="title is-4">
-            {{ profile.user.username }} follows:
+            {% if profile == request.user.profile %}
+                You follows:
+            {% else %}
+                {{ profile.user.username }} follows:
+            {% endif %}
         </h3>
         <div class="content">
             <ul>
-            {% for following in profile.follows.all %}
-                <li>
-                    <a href="{% url 'dwitter:profile' following.id %}">
-                        {{ following }}
-                    </a>
-                </li>
-            {% endfor %}
+            {% if profile.follows.all.count == 1 %}
+                {% if profile == request.user.profile %}
+                    <li>You don't follow anyone</li>
+                {% else %}
+                    <li>This user does not follow anyone</li>
+                {% endif %}
+            {% else %}
+                {% for following in profile.follows.all %}
+                    {% if following != profile %}
+                        <li>
+                            <a href="{% url 'dwitter:profile' following.id %}">
+                                {{ following }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
             </ul>
         </div>
     </div>
 
     <div class="block">
         <h3 class="title is-4">
-            {{ profile.user.username }} is followed by:
+            {% if profile == request.user.profile %}
+                You are followed by:
+            {% else %}
+                {{ profile.user.username }} is followed by:
+            {% endif %}
         </h3>
         <div class="content">
             <ul>
-            {% for follower in profile.followed_by.all %}
-                <li>
-                    <a href="{% url 'dwitter:profile' follower.id %}">
-                        {{ follower }}
-                    </a>
-                </li>
-            {% endfor%}
+            {% if profile.followed_by.all.count == 1 %}
+                {% if profile == request.user.profile %}
+                    <li>You are not followed by anyone</li>
+                {% else %}
+                    <li>This user is not followed by anyone</li>
+                {% endif %}
+            {% else %}
+                {% for follower in profile.followed_by.all %}
+                    {% if follower != profile %}
+                        <li>
+                            <a href="{% url 'dwitter:profile' follower.id %}">
+                                {{ follower }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor%}
+            {% endif %}
             </ul>
         </div>
     </div>
